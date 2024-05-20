@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from datetime import datetime
 import uuid
-from base_model import BaseModel  # Ensure you import your BaseModel class correctly
+from models.base_model import BaseModel  # Ensure you import your BaseModel class correctly
 
 class TestBaseModel(unittest.TestCase):
     def setUp(self):
