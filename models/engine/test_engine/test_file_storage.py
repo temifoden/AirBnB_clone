@@ -33,9 +33,21 @@ class TestFileStorage(unittest.TestCase):
         handle.write.assert_called once_with(
             Json.dumps({f"BaseModel.{self.model.id}": seld.model.to_dict()})
         )
-    @patch("buitlins.open", new_callable=mock_open, read_date='{"BaseModel.1234": {"__class__": "BaseModel", "id": "1234"}}')
+  
+ @patch("builtins.open", new_callable=mock_open, read_data='{"BaseModel.1234": {"__class__": "BaseModel", "id": "1234"}}')
     def test_reload(self, mock_open):
         """Test that reload() deserializes JSON file to __objects."""
-        with patch("json.load", return_value={"BaseModel.1234": {"__class__": "BaseModel", "id": "1234}}):
+        with patch("json.load", return_value={"BaseModel.1234": {"__class__": "BaseModel", "id": "1234"}}):
+            self.storage.reload()
+        self.assertIn("BaseModel.1234", self.storage.all())
+        self.assertIsInstance(self.storage.all()["BaseModel.1234"], BaseModel)
+
+    @patch("builtins.open", new_callable=mock_open)
+    def test_reload_no_file(self, mock_open):
+        """Test that reload() handles file not found error."""
+        mock_open.side_effect = FileNotFoundError
         self.storage.reload()
-        self.assertIn("Base
+        self.assertEqual(self.storage.all(), {})
+
+if __name__ == "__main__":
+    unittest.main()
